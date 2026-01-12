@@ -20,7 +20,7 @@ jobs:
         echo $CONDA/bin >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-        conda env update --file environment.yml --name base
+        pip install -r requirements.txt
     - name: Lint with flake8
       run: |
         conda install flake8
@@ -31,19 +31,9 @@ jobs:
     - name: Test with pytest
       run: |
         conda install pytest
-        pytest
-# Replace with your tokens
-export SLACK_BOT_TOKEN=<your-bot-token>
-export SLACK_APP_TOKEN=<your-app-level-token>
-# Clone this project onto your machine
-git clone https://github.com/slack-samples/bolt-python-getting-started-app.git
-
-# Change into this project
-cd bolt-python-getting-started-app/
-
-# Setup virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install the dependencies
-pip install -r requirements.txt
+        # Run pytest if test files exist, otherwise skip
+        if find . -name '*test*.py' -type f | head -1 | grep -q .; then
+          pytest
+        else
+          echo "No test files found, skipping tests"
+        fi
